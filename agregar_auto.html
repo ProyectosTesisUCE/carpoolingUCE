@@ -1,0 +1,339 @@
+
+<html>
+    <head>
+       
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/validarAuto.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.css">
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="js/jquery.mobile-1.4.5.js"></script>
+    <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+		
+		<link rel='stylesheet' href='css/spectrum.css' />
+		<script src='js/spectrum.js'></script>
+		
+		<script src="js/sweetalert2.js"></script>
+		<link rel="stylesheet" href="css/sweetalert2.css">
+
+ 	<title>Registrar Automóvil</title>
+	
+</head>
+
+<body>
+
+ 
+            <div id ="header4" data-role="header" class="ui-header ui-header-fixed" style="background:#0076bd;">
+            <!--<a href="#" data-icon="ayuda">Ayuda</a>   -->
+            <a href="javascript:history.back(-1);" class="botonTitulosIzq" data-icon="atras" >Atras</a>
+           
+            <h1 class="titulosTop" style="margin-right:50px; margin-left:140px;">Registra tu Auto</h1>
+
+            </div>
+            </br>
+            </br>
+			
+								 
+		<form id="addauto-form" method="post" onsubmit="return submitFormAddAuto();">
+            <div class="ui-grid-solo">
+                <div class="ui-block-a">
+                    <ul data-role="listview">
+						<!--<li><h2>Número de Placa</h2>
+                           <p id = "nombre"></p>
+                        </li>-->
+						
+                        <li><h2>Número de Placa</h2>
+                            <input type="text" data-clear-btn="true" name="placa_auto" id="placa_auto" value="" onKeyUp="this.value=this.value.toUpperCase();" required="required" >
+												
+                        </li>
+						
+						<li><h2>Marca</h2>
+						
+											
+                            <select name="marca_auto" id="marca_auto" data-native-menu="false" >
+							<option value="" disabled selected>Escoja una opción...</option>
+									<option value="CHEVROLET">CHEVROLET</option>
+									<option value="MAZDA">MAZDA</option>
+									<option value="HYUNDAI">HYUNDAI</option>
+									<option value="KIA">KIA</option>
+									<option value="GREATWALL">GREATWALL</option>
+									<option value="RENAULT">RENAULT</option>
+									<option value="TOYOTA">TOYOTA</option>
+									<option value="NISSAN">NISSAN</option>
+									<option value="VOLKSWAGEN">VOLKSWAGEN</option>
+									<option value="FORD">FORD</option>
+									<option value="FIAT">FIAT</option>
+									<option value="OTRO">OTRO</option>
+										
+							</select>
+                        </li>
+						
+						<li><h2>Modelo</h2>
+                             <input type="text" onKeyUp="this.value=this.value.toUpperCase();" data-clear-btn="true" name="modelo_auto" id="modelo_auto" value="" required="required" >
+                        </li>
+						
+                        <li><h2>Color</h2>
+                        							
+							<input type='text' id="color_auto" name="color_auto"  class="colores" value="" />
+							
+							<script>
+								$(".colores").spectrum({
+									preferredFormat: "name",
+									showPaletteOnly: true,
+									showPalette: true,
+									hideAfterPaletteSelect:true,
+									 allowEmpty:true,
+									palette: ['vino', 'rojo', 'gris', 'plata', 'verde', 'verdeoscuro', 'celeste', 'azul', 'negro', 'blanco', 'marron', 'amarillo', 'beige', 'tomate', 'dorado'  ]
+									
+								});
+								
+								
+							</script>
+							
+							
+                        </li>
+
+                        
+                        <li><h2>Tipo de Auto</h2>
+                           <fieldset data-role="controlgroup">
+								
+									<input type="radio" name="tipo_auto" id="radio-choice-1" value="SEDÁN" checked="checked">
+									<label for="radio-choice-1">SEDÁN</label>
+									<input type="radio" name="tipo_auto" id="radio-choice-2" value="HATCHBACK">
+									<label for="radio-choice-2">HATCHBACK</label>
+									<input type="radio" name="tipo_auto" id="radio-choice-3" value="CAMIONETA">
+									<label for="radio-choice-3">CAMIONETA</label>
+									<input type="radio" name="tipo_auto" id="radio-choice-4" value="SUV">
+									<label for="radio-choice-4">SUV</label>
+									
+							</fieldset>
+                        </li>
+						
+						 <li><h2>Capacidad para Pasajeros</h2>
+                            <input type="range" name="capacidad_auto" id="capacidad_auto" value="3" min="1" max="5" step="1" data-highlight="true">
+                        </li>
+						  
+						<li style="text-align:center; padding-left:16px; ">
+						<h2 style="text-align:left;">Agregar Foto</h2>
+							<img id="fotoAutoCargar" src="img/addcar.png" style="width:35%; border: 3px dashed #0076bd; padding:5px; ">
+							<p id="mensaje"></p>
+						</li>
+	
+                    </ul>
+                </div>
+
+
+            </div>
+		
+            </br>
+                <div>
+                <button type="submit" id="agregarAuto" class="agregaAutoBtn" data-icon="agregoAutos" >Agregar Auto</button>
+                </div>
+            </br>
+		</form>
+
+
+
+
+  <script type="text/javascript" src="cordova.js"></script>
+		 
+    <script type="text/javascript" src="js/fastclick.js"></script>
+
+     <script type="text/javascript" src="js/index.js"></script>
+	 <script>
+			function onBackKeyDown() {
+			// Handle the back button
+			navigator.app.exitApp();
+			}
+			document.addEventListener("backbutton", onBackKeyDown, false);
+	</script>
+	
+		
+	 <script>
+	 
+	 
+			var usuario = JSON.parse(localStorage.getItem('usuario'));
+			var id_usuario=usuario.id;
+			//$("#nombre").html(usuario.id);
+			
+			var autoOb = JSON.parse(localStorage.getItem('autoOb'));
+			var fotoAutoTemp = "";
+		
+		//FUNCIÓN PARA VALIDAR LA CORRECTA CARGA DE LA FOTO DEL USUARIO EN LA BASE DE DATOS
+		function succesFileTransfer(result){
+			console.log(result.response);
+			var resultado = JSON.parse(result.response);
+			if(resultado.flag == "si"){
+				autoOb.foto_auto = resultado.foto_auto;
+				localStorage.setItem('autoOb',JSON.stringify(autoOb)); //actualizo localstorage con los nuevos valores
+				//$("#fotoAutoCargar").attr("src",autoOb.foto_auto);				
+				/*alert("HA REGISTRADO CORRECTAMENTE SU AUTOMÓVIL. ");
+				window.location.replace("perfil.html");*/
+				swal({
+						title: "Éxito!",
+						text: 'Ha registrado correctamente su automóvil',
+						type: "success"
+				}).then(function() {
+							window.location = "perfil.html";
+						});
+				
+			}else{
+				alert("Error actualizando la foto" );
+			}
+		}
+		function errorFileTransfer(result){
+			alert("Error subiendo la foto" + result);
+			console.log(result);
+		}
+			
+	 
+	 // LLAMADA AL SERVICIO WEB PARA SUBIR LA FOTO DE USUARIO Y ENVÍO DE PARÁMETROS NECESARIOS PARA EL MISMO
+		function cargarFotoAuto(imageUriToUpload){
+			var url=encodeURI("http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php");
+		
+			var params = new Object();
+			params.accion = "agregarAuto";  
+			params.id_usuario = usuario.id;  
+			params.placa_auto = $("#placa_auto").val();  
+			params.marca_auto = $("#marca_auto").val();  
+			params.modelo_auto = $("#modelo_auto").val();  
+			params.color_auto = $("#color_auto").val();  
+			params.tipo_auto = $('input:radio[name=tipo_auto]:checked').val();  
+			params.capacidad_auto = $("#capacidad_auto").val();  		
+			
+			var options = new FileUploadOptions();
+			options.fileKey = "FotoAutoUsuario"; //depends on the api
+			options.fileName = imageUriToUpload.substr(imageUriToUpload.lastIndexOf('/')+1);
+			options.mimeType = "image/jpeg";
+			options.params = params;
+			options.chunkedMode = true; //this is important to send both data and files
+
+			var ft = new FileTransfer();
+			ft.upload(imageUriToUpload, url, succesFileTransfer, errorFileTransfer, options);	
+		}
+	 
+	 // FUNCIÓN PARA ACCEDER TANTO A LA CÁMARA COMO A LA GALERÍA DEL TELÉFONO PARA ESCOGER UNA FOTO DE USUARIO	
+		function seleccion(results){
+			console.log(results.buttonIndex);
+			if(results.buttonIndex==1){
+				//Camara
+				navigator.camera.getPicture(function(result){
+					console.log(result);
+					fotoAutoTemp = result;
+					$("#mensaje").html("Foto cargada exitosamente");
+					//cargarFotoAuto(result);
+				},function(error){
+					console.log(error);
+				},{
+					quality: 50,
+					destinationType: Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.CAMERA,
+				    targetWidth: -1,
+					targetHeight: -1,
+					encodingType: Camera.EncodingType.JPEG,
+					mediaType: Camera.MediaType.PICTURE,
+					correctOrientation: true
+				});
+			}else if(results.buttonIndex==2){
+				//Galeria
+				navigator.camera.getPicture(function(result){
+					console.log(result);					
+					fotoAutoTemp = result;
+					$("#mensaje").html("Foto cargada exitosamente");
+					//cargarFotoAuto(result);
+				},function(error){
+					console.log(error);
+				},{
+					quality: 50,
+					destinationType: Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.SAVEDPHOTOALBUM,
+				    targetWidth: -1,
+					targetHeight: -1,
+					encodingType: Camera.EncodingType.JPEG,
+					mediaType: Camera.MediaType.PICTURE,
+					correctOrientation: true
+				});
+			}			
+		}
+	 //LLAMADA DEL PLUGGIN Y FUNCIONALIDAD DE LA CAMARA EN EL DISPOSITIVO MÓVIL 
+	 	$(document).on('click', '#fotoAutoCargar', function(){	
+			console.log("entro");
+			navigator.notification.prompt("Seleccione una imagen de su auto", seleccion, "Foto", ['Camara','Galería','Salir'], "");
+			
+		});
+	 
+	 
+		/*function subirAutoSinFoto(){
+			
+					  $.ajax
+						({
+							type:'POST',
+							//url:'http://localhost:8383/Servidor/api.php',
+							url:'http://192.168.1.5:8383/Servidor/api.php',
+							data:{
+								'accion': 'agregarAuto',
+								'id_usuario': id_usuario,
+								'placa_auto': $("#placa_auto").val(),
+								'marca_auto': $("#marca_auto").val(),
+								'modelo_auto': $("#modelo_auto").val(),
+								'color_auto': $("#color_auto").val(),
+								'tipo_auto': $('input:radio[name=tipo_auto]:checked').val(),
+								'capacidad_auto': $("#capacidad_auto").val()},
+							contenType : 'application/json; charset=utf-8',
+							dataType : 'json',
+
+							success:function(data)
+							{
+							
+								if (data.flag == 'si'){
+									alert("HA REGISTRADO CORRECTAMENTE SU AUTOMÓVIL. ");
+									
+									window.location.replace("perfil.html");
+								
+									//mandar a otra pagina
+								}else if (data.flag == 'no'){
+									alert("Datos ingresados incorrectamente");
+								}
+							}
+                        
+						}).fail(
+
+							function (xhr, textStatus, err)
+							{
+                            
+								alert("Error grave");
+                            
+							}
+						);
+		}*/
+			
+		// VALIDAMOS QUE EXISTA UNA FOTO DEL AUTO PARA REGISTRARLO
+		function submitFormAddAuto(){
+				validado = new Boolean(true);
+					validado=validarAuto();
+					//alert('Validados ' + validado);
+					if(validado !== false)
+					{
+						if(fotoAutoTemp != ""){
+							cargarFotoAuto(fotoAutoTemp);
+						}else{
+							/*alert("Debe subir una foto de su auto para poder registrarlo."); podría llamar método para subir sin foto subirAutoSinFoto*/
+							swal({
+								  title:'Atención',
+								  text:'Debe subir una foto de su auto para poder registrarlo.',
+								  type:'warning'
+								});
+						}
+						return false;
+					};return false;
+					
+				}
+		
+	
+	</script>
+</body>
+</html>
