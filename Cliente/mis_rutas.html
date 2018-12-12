@@ -1,0 +1,652 @@
+
+<html>
+	<head>
+		   
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+		<script type="text/javascript" src="js/jquery.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+	
+		<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.css">
+		<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+		
+		<link href="css/star-rating.css" rel="stylesheet">
+		<script src="js/star-rating.min.js"></script>
+		
+	     <script src="js/sweetalert2.js"></script>
+		<link rel="stylesheet" href="css/sweetalert2.css">
+	
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwa9xK2Kt0sPdhoslHsNyczPJ3aU1gMtU"></script>
+		<script type="text/javascript" src="js/gmaps.js"></script>
+		
+		
+		<title>Mis Rutas</title>
+		
+		<style>
+		
+	 #descRutaMapa {
+      width: 100%;
+      height: 300px;
+	  margin: 0px;
+    }
+</style>
+
+		
+	</head>
+
+	<body>
+
+ 
+            <div id ="header4" data-role="header" class="ui-header ui-header-fixed" style="background:#0076bd;">
+				<!--<a href="#" data-icon="ayuda">Ayuda</a>   -->
+				<a href="#" class="botonTitulosIzq" data-icon="atras" onclick="window.location.href='perfil.html'">Atras</a>
+			   
+				<h1 class="titulosTop" style="margin-right:20px; margin-left:130px;">Mis Rutas Activas</h1>
+
+            </div>
+            </br>
+            </br>
+										 
+		
+            <div class="ui-grid-solo">
+                <div class="segBlock">
+						<p>
+						 	<h4 style="text-align:center; color:#004671;">Mis rutas creadas</h4>
+						<p>
+                    <ul data-role="listview" id="listaRutas" name="listaRutas">
+															
+                    </ul>
+					
+					</br>
+					<p style="color:red; font-weight:bold;">*Nota</p>
+					<span>Por favor no se olvide de calificar las rutas al terminar su trayecto. Esto nos ayuda a mejorar</span>
+                </div>
+				
+				<div class="segBlock">
+						<p>
+						 	<h4 style="text-align:center; color:#004671;">Mis rutas ejecutadas sin calificar</h4>
+						<p>
+                    
+					
+					<ul data-role="listview" id="listaHistorialRutas" name="listaHistorialRutas">	
+					
+                    </ul>
+					</br>
+					
+                </div>
+			</div>
+			
+			<!-- POPUP mostrando la información de una ruta encontrada, con la opción de reservarla -->
+						<div data-role="popup" id="popupRuta" data-overlay-theme="a" data-theme="c" data-dismissible="false" style="max-width:400px;" class="ui-corner-all">
+							<div data-role="header" data-theme="a" class="ui-corner-top">
+								<h1>Mi Ruta</h1>
+								<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">X</a>
+							</div>
+							<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" style="background-color:white;">												 
+								<form id="addauto-form" >
+									<ul data-role="listview">
+										<li>
+											<div class="ui-grid-a">
+												<div class="ui-block-a">
+												   <img class="popphoto"  id="rutaDescFotoCargar" src="img/fotoperfil.jpg" style="
+													width: 70%;
+													height: 130px;
+													margin-top: 10px;
+													margin-left: 10px;
+													margin-bottom: 10px;
+													border: 2px solid #0076bd;">
+													
+												</div>
+												<div class="ui-block-b">
+													<h3 style="font-size:15px; color: #004671">Mi Perfil de Chofer</h3>
+													<p id="rutaDescNombre" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescApellido" class="textoDatosUsuarioPopUp"></p>
+													<p id ="rutaDescEdad" class="textoDatosUsuarioPopUp"></p>
+													<p id ="rutaDescRol" class="textoDatosUsuarioPopUp"></p>
+													<p id ="rutaDescContacto" class="textoDatosUsuarioPopUp"></p>
+												</div>
+											</div>
+										</li>
+										<li>
+											 <div class="ui-grid-a">
+														<!--<h3 style="text-align:center; margin:10px;">Mi Automóvil</h3>-->
+												<div class="ui-block-a">
+										
+													<img class="popphoto" id="rutaDescFotoAutoUsuario" src="img/agregarauto.jpg" alt="Mi auto" style="
+													width: 100%;
+													height:25%;
+													border: 2px solid #0076bd;">															
+																	
+																		
+												</div>
+												<div class="ui-block-b" style="padding-left: 10px; text-align:left;">
+													<h3 style="font-size:15px; color: #004671">Mi Auto</h3>
+													<p id="rutaDescPlaca" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescMarca" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescModelo" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescTipo" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescColor" class="textoDatosUsuarioPopUp"></p>
+												</div>
+												 
+														   
+											</div>
+										</li>
+										
+										<li style="padding:0px; color: #004671;"><h2 style="text-align:center;">Trayectoria de mi ruta</h2>
+											<div id="descRutaMapa"></div>
+										</li>	
+											
+										<li>
+											<div>
+												<h3 style="font-size:15px; color: #004671">Datos de mi ruta</h3>
+												<p id="rutaDescPDEncuentro" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescDestino" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescSector" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescFecha" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescHora" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescCapacidad" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescEstado" class="textoDatosUsuarioPopUp"></p>
+												<div style="visibility:hidden; width:0px; height:0px;" > 
+													<input type="text" value="0" id="rutaDescId" name="capacidadMax" disabled="disabled" />
+												</div>
+											</div>
+										</li>
+										
+										<!--<li>
+											<h2 style="text-align:center;">Calificación de la Ruta</h2>
+											<div style="text-align:center;" >
+												<fieldset data-role="controlgroup" data-mini="true">
+													<select id="star-rating" style="text-align:center">
+														<option value="5">Excelente</option>
+														<option value="4">Muy Bueno</option>
+														<option value="3">Bueno</option>
+														<option value="2">Malo</option>
+														<option value="1">Terrible</option>
+													</select>
+												</fieldset>
+											</div>
+											
+										</li>-->
+									</ul>	
+									
+								
+									</br>
+									<div style="display:flex">
+										<!--<button type="submit" id="btnCalificaRuta" class="agregaAutoBtn" data-icon="calificar" style="width:70%;">Calificar</button>-->
+										<a href="#" class="agregaAutoBtn" data-role="button" data-inline="true" data-rel="back" data-theme="c">Atras</a>
+									</div>
+									</br>
+								</form>
+							</div>
+						</div> 	<!-- POPUP fin -->
+						
+						
+			<!-- PopUp para confirmar la cancelación de una ruta -->
+			<div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="c" data-dismissible="false" style="max-width:400px;" class="ui-corner-all">
+				<div data-role="header" data-theme="a" class="ui-corner-top">
+					<h1>Cancelar Ruta?</h1>
+				</div>
+				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" style="background-color:white;">
+					<h3 class="ui-title">¿Realmente quieres cancelar la ruta?</h3>
+					<p>Esta acción no se puede deshacer.</p>
+					<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Atras</a>
+					<a href="#" id="btnCancelarRuta" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">Cancelar Ruta</a>
+				</div>
+			</div>
+			
+			 <!-- PopUp para calificar una ruta -->
+			<div data-role="popup" id="popupDialog2" data-overlay-theme="a" data-theme="c" data-dismissible="false" style="max-width:400px;" class="ui-corner-all">
+				<div data-role="header" data-theme="a" class="ui-corner-top">
+					<h1>Calificar</h1>
+				</div>
+				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" style="background-color:white;">
+					<form>
+					<ul data-role="listview">	
+						<li>
+											
+											<div style="text-align:center;" >
+												<fieldset data-role="controlgroup" data-mini="true">
+													<select id="star-rating" style="text-align:center">
+														<option value="5">Excelente</option>
+														<option value="4">Muy Bueno</option>
+														<option value="3">Bueno</option>
+														<option value="2">Malo</option>
+														<option value="1">Terrible</option>
+													</select>
+												</fieldset>
+											</div>
+											
+										</li>
+					</ul>
+					</form>
+					<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Atras</a>
+					<a href="#" id="btnCalificaRuta" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">Calificar Ruta</a>
+				</div>
+			</div>
+			
+			
+		<script type="text/javascript" src="cordova.js"></script>
+			 
+		<script type="text/javascript" src="js/fastclick.js"></script>
+
+		<script type="text/javascript" src="js/index.js"></script>
+	
+
+		<script>
+			function onBackKeyDown() {
+			// Handle the back button
+			navigator.app.exitApp();
+			}
+			document.addEventListener("backbutton", onBackKeyDown, false);
+		</script>
+
+		
+		<script>
+			//captura de fecha y hora actual
+			var hoy =new Date();
+			var y = hoy.getFullYear();
+			//Mes
+			var m = hoy.getMonth() + 1;
+			//Día
+			var d = hoy.getDate();
+			
+			//fecha del actual día 
+			var fechaFormato = y + "-" + m + "-" + d ;
+			
+			
+			//capturar la hora
+			var hora = hoy.getHours();
+			var minuto = hoy.getMinutes();
+			var segundo = hoy.getSeconds();
+			
+			if (hora < 10) {hora = "0" + hora}
+			if (minuto < 10) {minuto = "0" + minuto}
+			if (segundo < 10) {segundo = "0" + segundo}
+			// hora actual del día
+			var horita = hora + ":" + minuto + ":" + segundo;
+		
+		</script>
+
+
+		<script>
+		 		 
+				var usuario = JSON.parse(localStorage.getItem('usuario'));
+				var id_usuario=usuario.id;
+							
+				var autoOb = JSON.parse(localStorage.getItem('autoOb'));
+			
+			
+						
+				
+			//OBTENER TODAS LAS RUTAS CREADAS DESDE EL ACTUAL DÍA EN ADELANTE DEL USUARIO LOGUEADO
+
+			$('document').ready(function(){
+				
+					$.ajax
+						({
+							type:'POST',
+							
+							url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+							data:{
+								'accion': 'obtenerRutasUsuarioLog',
+								'id_usuario': usuario.id ,
+								'hoyvar': fechaFormato},
+							contenType : 'application/json; charset=utf-8',
+							dataType : 'json',
+
+							success:function(data)
+							{
+								
+								if (data.flag == 'si'){
+									// Cargar la lista de rutas encontradas en la pantalla de busqueda	
+									var rutas = "";
+									for(var i=0; i< data.rutas.length;i++){
+										rutas += '<li><a href="#" id="rutas-'+data.rutas[i].id_ruta+'" class="arutas btnRuta">'+
+										'<div class="divrutas"><img class="imgrutas" src="'+data.rutas[i].foto+'" ></div>'+
+										'<div><h2 class="secRutas">Sector:   '+data.rutas[i].nombre_sector+' '+
+										'<button class="cancelarBtn" data-role="none" id="cancelar-'+data.rutas[i].id_ruta+'">Cancelar</button></h2>'+
+										'<p>Chofer: '+data.rutas[i].nombre+' '+data.rutas[i].apellido+'</p>'+
+										'<p>Inicio: '+data.rutas[i].fecha_ruta+' '+data.rutas[i].hora_ruta+'</p>'+
+										'<p>Dispone de : '+data.rutas[i].disponibilidad_ruta+' asientos</p>'+
+										'<p>Estado de la ruta : '+data.rutas[i].estado_ruta+'</p>'+
+										'</div>'+
+										'</li>';
+									}
+									$("#listaRutas").html(rutas);
+														
+									
+								}else if (data.flag == 'no'){
+										$("#listaRutas").html(" USTED NO HA CREADO NINGUNA RUTA");
+										//alert("No se han encontrado rutas creadas ");
+									
+							   }else if (data.flag == 'error'){
+									alert("Ha ocurrido un error grave");
+							   }
+							}
+							
+						}).fail(
+
+							function (xhr, textStatus, err)
+							{
+							   
+								alert("ERROR CON EL SERVICIO");
+								
+							}
+						);
+							return false;
+		 
+			});// end de la función llamar rutas
+		 
+									
+		</script>
+		
+		<script>
+			// POPUP para calificar una ruta
+			var rutaCalificar = 0;
+			$("body").on("click",'.calificarBtn',function(){
+				//alert('clicked! asdsadadadw');
+				$("#popupDialog2").popup("open");
+				rutaCalificar = $(this).attr("id").split("-")[1];
+			});
+					
+			// POPUP para confirmar la cancelación de una ruta
+			var rutaBorrar = 0;
+			$("body").on("click",'.cancelarBtn',function(){
+				//alert('clicked! asdsadadadw');
+				$("#popupDialog").popup("open");
+				rutaBorrar = $(this).attr("id").split("-")[1];
+			});
+
+			$("#btnCancelarRuta").click(function(){
+				eliminarRutaSeleccionada();
+			});
+			
+			
+			///Cancelar una ruta seleccionada
+			function eliminarRutaSeleccionada(){				
+					$.ajax
+						({
+							type:'POST',
+							url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+							
+							data:{
+								'accion': 'cancelarRuta',
+								'id_ruta': rutaBorrar},
+							contenType : 'application/json; charset=utf-8',
+							dataType : 'json',
+
+							success:function(data)
+							{
+								
+								if (data.flag == 'si'){
+									/*alert("La ruta ha sido cancelada exitosamente")
+									location.reload();*/
+									
+									swal({
+									
+									text: "La ruta ha sido cancelada exitosamente",
+									type: "success"
+								}).then(function() {
+									window.location.reload();
+								});
+									
+																
+								}else if (data.flag == 'existenreservas'){
+										
+									/*alert("No se puede cancelar la ruta ya que existen reservas hechas en esta. ");*/
+									swal({
+									  title:'Error',
+									  text:'No se puede cancelar la ruta ya que existen reservas hechas en esta.',
+									  type:'error'
+									});
+									
+							   }else if (data.flag == 'error'){
+									alert("ERROR: no se ha ejecutado la consulta");
+							   }
+							}
+							
+						}).fail(
+
+							function (xhr, textStatus, err)
+							{
+							   
+								alert("ERROR CON EL SERVICIO");
+								
+							}
+						);
+							return false;
+		 
+			};// end de la función eliminar rutas
+			
+			
+	/*Detalle ruta*/
+	var rutaSelect =0;
+	$("body").on("click",'.btnRuta',function()
+	{
+		rutaSelect = $(this).attr("id").split("-")[1];
+		$.ajax
+		({
+			type:'POST',
+		
+			url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+			data:{
+				'accion': 'descripcionRuta',
+				'idRuta': rutaSelect},
+			contenType : 'application/json; charset=utf-8',
+			dataType : 'json',
+
+			success:function(data)
+			{
+				
+				if (data.flag == 'si'){
+							
+					// datos del chofer
+					var edadChofer=new Date(data.rutas.fecha_nac);
+						function calculateAgeDriver() { // birthday is a date
+					   var ageDifMs = Date.now() - edadChofer.getTime();
+					   var ageDate = new Date(ageDifMs); // miliseconds from epoch
+					   return Math.abs(ageDate.getUTCFullYear() - 1970);
+					 }
+					$("#rutaDescNombre").html('<span class="spanPopUp">Nombre: </span>' + data.rutas.nombre);
+					$("#rutaDescApellido").html('<span class="spanPopUp">Apellido: </span>' + data.rutas.apellido);
+					$("#rutaDescEdad").html('<span class="spanPopUp">Edad: </span>' + calculateAgeDriver()+ " años");
+					$("#rutaDescRol").html('<span class="spanPopUp">Rol: </span>' + data.rutas.rol);
+					$("#rutaDescContacto").html('<span class="spanPopUp"># Contacto: </span>' + data.rutas.telefono);
+					$("#rutaDescFotoCargar").attr("src",data.rutas.foto);
+					// datos del auto de la ruta
+					$("#rutaDescPlaca").html('<span class="spanPopUp">Placa: </span>' + data.rutas.placa_auto);
+					$("#rutaDescMarca").html('<span class="spanPopUp">Marca: </span>' + data.rutas.marca_auto);
+					$("#rutaDescModelo").html('<span class="spanPopUp">Modelo: </span>' + data.rutas.modelo_auto );
+					$("#rutaDescTipo").html('<span class="spanPopUp">Tipo: </span>' + data.rutas.tipo_auto);
+					$("#rutaDescColor").html('<span class="spanPopUp">Color: </span>' + data.rutas.color_auto);
+					$("#rutaDescFotoAutoUsuario").attr("src",data.rutas.foto_auto);
+					// datos de la ruta
+					$("#rutaDescPDEncuentro").html('<span class="spanPopUp">Punto de Encuentro: </span>' + data.rutas.pd_encuentro);
+					$("#rutaDescDestino").html('<span class="spanPopUp">Destino: </span>' + data.rutas.direccion_destino);
+					$("#rutaDescSector").html('<span class="spanPopUp">Sector destino: </span>' + data.rutas.nombre_sector);
+					$("#rutaDescFecha").html('<span class="spanPopUp">Fecha: </span>' + data.rutas.fecha_ruta);
+					$("#rutaDescHora").html('<span class="spanPopUp">Hora: </span>' + data.rutas.hora_ruta);
+					$("#rutaDescCapacidad").html('<span class="spanPopUp">Disponibilidad: </span>' + data.rutas.disponibilidad_ruta + " asientos");
+					$("#rutaDescEstado").html('<span class="spanPopUp">Estado de la ruta: </span>' + data.rutas.estado_ruta);
+					$("#rutaDescId").val(data.rutas.id_ruta);
+					$("#popupRuta").popup("open");
+					$("#popupRuta2").popup("open");
+					// graficar la ruta en el mapa con las coordenadas obtenidas de la BD
+				
+					 var mapDescRuta = new GMaps({
+						  el: '#descRutaMapa',
+						  lat: -0.197806,
+						  lng: -78.5023
+						});
+						var destinoLatDesRuta = data.rutas.latitud_destino;
+						var destinoLonDesRuta = data.rutas.longitud_destino;
+					mapDescRuta.drawRoute({
+					  origin: [-0.197806, -78.5023],
+					  destination: [destinoLatDesRuta, destinoLonDesRuta],
+					  travelMode: 'driving',
+					  strokeColor: '#B5071B',
+					  strokeOpacity: 0.5,
+					  strokeWeight: 6
+					});
+				}else if (data.flag == 'no'){
+						$("#listaRutas").html("NO SE HA ENCONTRADO NI UNA RUTA");
+						
+					
+			   }else if (data.flag == 'error'){
+					alert("Ha ocurrido un error grave");
+			   }
+			}
+			
+		}).fail(
+
+			function (xhr, textStatus, err)
+			{
+			   
+				alert("ERROR CON EL SERVICIO");
+				
+			}
+		);
+	}); /*fin detalle ruta*/
+	
+	
+	/*calificar ruta*/
+	
+	$("#btnCalificaRuta").click(function(){
+		$.ajax
+		({
+			type:'POST',
+		
+			url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+			data:{
+				'accion': 'calificarRuta',
+				'id_usuario': id_usuario,
+				/*'id_ruta': $("#rutaDescId").val(),*/
+				'id_ruta': rutaCalificar,
+				'calificacionRuta': $("#star-rating").val()},
+			contenType : 'application/json; charset=utf-8',
+			dataType : 'json',
+
+			success:function(data)
+			{
+				
+				if (data.flag == 'si'){
+						/*alert("Gracias por calificar el servicio brindado en esta ruta");	
+								location.reload();*/
+								
+								swal({
+									
+									text: "Gracias por calificar el servicio brindado en esta ruta",
+									type: "success"
+								}).then(function() {
+									window.location.reload();
+								});
+						
+					
+				}else if (data.flag == 'yacalifico'){
+					
+						alert("Usted ya ha calificado esta ruta");
+					
+					
+			   }else if (data.flag == 'error'){
+					alert("Ha ocurrido un error grave");
+			   }
+			}
+			
+		}).fail(
+
+			function (xhr, textStatus, err)
+			{
+			   
+				alert("ERROR CON EL SERVICIO");
+				
+			}
+		);
+	});
+	/* FIN calificar ruta*/
+			
+			
+	//OBTENER HISTORIAL DE  RUTAS EJECUTADAS DEL  USUARIO LOGUEADO
+
+			$('document').ready(function(){
+				
+					$.ajax
+						({
+							type:'POST',
+							
+							url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+							data:{
+								'accion': 'historialRutasUsuario',
+								'id_usuario': usuario.id ,
+								'hoyvar': fechaFormato},
+							contenType : 'application/json; charset=utf-8',
+							dataType : 'json',
+
+							success:function(data)
+							{
+								
+								if (data.flag == 'si'){
+									// Cargar la lista de rutas encontradas en la pantalla de busqueda	
+									var rutas = "";
+									for(var i=0; i< data.rutas.length;i++){
+										rutas += '<li><a href="#" id="rutas-'+data.rutas[i].id_ruta+'" class="arutas btnRuta2">'+
+										'<div class="divrutas"><img class="imgrutas" src="'+data.rutas[i].foto+'" ></div>'+
+										'<div><h2 class="secRutas">Sector:   '+data.rutas[i].nombre_sector+' '+
+										'<button class="calificarBtn" data-role="none" id="calificar-'+data.rutas[i].id_ruta+'">Calificar</button></h2>'+
+										'<p>Chofer: '+data.rutas[i].nombre+' '+data.rutas[i].apellido+'</p>'+
+										'<p>Inicio: '+data.rutas[i].fecha_ruta+' '+data.rutas[i].hora_ruta+'</p>'+
+										'<p>Estado de la ruta : '+data.rutas[i].estado_ruta+'</p>'+
+										'<p class="pRutas">'+data.rutas[i].direccion_destino+' </p>'+
+										'</div>'+
+										'</li>';
+									}
+									$("#listaHistorialRutas").html(rutas);
+														
+									
+								}else if (data.flag == ''){
+										$("#listaHistorialRutas").html(" NO SE HA ENCONTRADO RUTAS SIN CALIFICAR");
+										//alert("No se han encontrado rutas creadas ");
+									
+							   }else if (data.flag == 'error'){
+									alert("Ha ocurrido un error grave");
+							   }
+							}
+							
+						}).fail(
+
+							function (xhr, textStatus, err)
+							{
+							   
+								alert("ERROR CON EL SERVICIO");
+								
+							}
+						);
+							return false;
+		 
+			});// end de la función llamar rutas
+			
+			
+		
+			
+		</script>
+		
+		<script>
+				
+			// Using vanilla javascript:
+			var starrating = new StarRating( document.getElementById( 'star-rating' ));
+			$( '#star-rating' ).starrating();
+			// OR - Using jQuery:
+					
+			$( '#star-rating' ).starrating({
+			clearable : true,
+			initialText: "Click to Rate",
+			onClick : null,
+			showText : true,
+			});
+
+
+		</script>
+	
+	</body>
+</html>
