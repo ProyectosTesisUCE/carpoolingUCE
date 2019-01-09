@@ -1,0 +1,1288 @@
+<html>
+<head>
+ 	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        
+	<!-- <link rel="stylesheet" type="text/css" href="css/index.css">-->
+
+	<script type="text/javascript" src="js/jquery.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script type="text/javascript" src="js/validarRuta.js"></script>
+	<script type="text/javascript" src="js/validaBusquedaRuta.js"></script>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.css">
+	<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+
+	<script type="text/javascript" src="js/select2.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/select2.min.css">
+	
+	 <script src="js/sweetalert2.js"></script>
+	<link rel="stylesheet" href="css/sweetalert2.css">
+    
+	<title>Perfil</title>
+	 <script>
+		$(document).ready(function() {
+			$('.js-example-basic-single').select2();
+		});
+		
+	</script>
+ 		
+	<style type="text/css">
+	    .rojo {color:#FF0000;}
+		.azul {color:#2D91F5;}
+		.verde {color:#06BB06;}
+		.rosado {color:#F42EE6;}
+	</style>
+
+
+
+<script>
+// MAPA PARA BUSCAR DIRECCIONES
+var geocoder;
+var map;
+var marker;
+
+/*
+ * Google Map with marker
+ */
+function initialize() {
+    var initialLat = $('.search_latitude').val();
+    var initialLong = $('.search_longitude').val();
+    initialLat = initialLat?initialLat: -0.200796;
+    initialLong = initialLong?initialLong:-78.502036;
+
+    var latlng = new google.maps.LatLng(initialLat, initialLong);
+    var options = {
+        zoom: 16,
+        center: latlng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    map = new google.maps.Map(document.getElementById("geomap"), options);
+
+    geocoder = new google.maps.Geocoder();
+
+    marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        position: latlng
+    });
+
+    google.maps.event.addListener(marker, "dragend", function () {
+        var point = marker.getPosition();
+        map.panTo(point);
+        geocoder.geocode({'latLng': marker.getPosition()}, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                marker.setPosition(results[0].geometry.location);
+                $('.search_addr').val(results[0].formatted_address);
+                $('.search_latitude').val(marker.getPosition().lat());
+                $('.search_longitude').val(marker.getPosition().lng());
+            }
+        });
+    });
+
+}
+
+$(document).ready(function () {
+    //load google map
+    initialize();
+    
+    /*
+     * autocomplete location search
+     */
+    var PostCodeid = '#search_location';
+    $(function () {
+        $(PostCodeid).autocomplete({
+            source: function (request, response) {
+                geocoder.geocode({ //determinar el pais donde se desea buscar las direcciones
+                    'address': request.term,
+					componentRestrictions: {country: "EC"}
+                }, function (results, status) {
+                    response($.map(results, function (item) {
+                        return {
+                            label: item.formatted_address,
+                            value: item.formatted_address,
+                            lat: item.geometry.location.lat(),
+                            lon: item.geometry.location.lng()
+                        };
+                    }));
+                });
+            },
+            select: function (event, ui) {
+                $('.search_addr').val(ui.item.value);
+                $('.search_latitude').val(ui.item.lat);
+                $('.search_longitude').val(ui.item.lon);
+                var latlng = new google.maps.LatLng(ui.item.lat, ui.item.lon);
+                marker.setPosition(latlng);
+                initialize();
+            }
+        });
+    });
+    
+    /*
+     * Point location on google map
+     */
+    $('.get_map').click(function (e) {
+        var address = $(PostCodeid).val();
+        geocoder.geocode({'address': address}, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                marker.setPosition(results[0].geometry.location);
+                $('.search_addr').val(results[0].formatted_address);
+                $('.search_latitude').val(marker.getPosition().lat());
+                $('.search_longitude').val(marker.getPosition().lng());
+            } else {
+                alert("Por favor ingrese una dirección para realizar la búsqueda: " + status);
+			
+            }
+        });
+        e.preventDefault();
+    });
+
+    //Add listener to marker for reverse geocoding
+    google.maps.event.addListener(marker, 'drag', function () {
+        geocoder.geocode({'latLng': marker.getPosition()}, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    $('.search_addr').val(results[0].formatted_address);
+                    $('.search_latitude').val(marker.getPosition().lat());
+                    $('.search_longitude').val(marker.getPosition().lng());
+                }
+            }
+        });
+    });
+});
+</script>  
+  
+<style>
+	#geomap{width:100%; height:300px;}
+	
+	 #descRutaMapa {
+      width: 100%;
+      height: 300px;
+	  margin: 0px;
+    }
+</style>
+
+</head>
+
+<body>
+<!--////////////////////////////////CONTENT PERFIL//////////////////////////////////////////////-->
+    <div id="perfil" class="tabcontent">
+
+
+            <div id ="header1" data-role="header" class="ui-header ui-header-fixed" style="background:#0076bd;">
+                <a href="#" data-icon="acercade" onclick="window.location.href='detalles.html'">Acerca de</a>
+				<h1 class="titulosTop">Mi Perfil</h1>
+				<a href="#" data-icon="ayuda" onclick="window.location.href='ayuda.html'">  Ayuda</a>
+             
+            </div>
+             </br>
+             </br>
+			</br>	
+
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <img id="fotoCargar" src="img/fotoperfil.jpg" style="
+                    width: 75%;
+					height: 30%;
+                    margin-top: 10px;
+                    margin-left: 10px;
+                    margin-bottom: 10px;
+					border: 2px solid #0076bd;">
+                </div>
+                <div class="ui-block-b">
+                    <h3>Perfil de Usuario</h3>
+                    <p id="nombre" class="textoDatosUsuario"></p>
+                    <p id ="edad" class="textoDatosUsuario"></p>
+                    <p id ="rol" class="textoDatosUsuario"></p>
+                </div>
+            </div>
+
+            <div class="ui-grid-solo">
+                <div class="ui-block-a">
+                    <ul data-role="listview">
+                        <li id="nombreMostrar"></li>
+						<li id="fechaMostrar"></li>
+                        <li id="sexoMostrar"></li>
+                        <li id="sectorMostrar"></li>
+                        <li id="telefonoMostrar"></li>
+
+                    </ul>
+                </div>
+            </div>
+             </br>
+             </br>
+             </br>
+			 
+			 
+
+
+            <div  id ="footer1" data-role="footer" class="ui-footer ui-footer-fixed" >
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="buscarnav1" data-icon="buscar" onclick="opcion(event,'buscar')">Buscar</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="autonav1"  data-icon="auto" onclick="opcion(event,'miauto')">Mi Auto</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="rutanav1" data-icon="ruta" onclick="opcion(event,'miruta')">+ Ruta</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="perfilnav1" data-icon="salir" >Salir</a></li>
+                    </ul>
+                </div>
+            </div><!-- /footer -->
+
+
+    </div>
+
+
+    <!--////////////////////////////////CONTENT BUSCAR//////////////////////////////////////////////-->
+
+    <div id="buscar" class="tabcontent">
+
+
+            <div id ="header2" data-role="header" class="ui-header ui-header-fixed" style="background:#0076bd;">
+                <!--<a href="#" data-icon="ayuda">Ayuda</a>   -->
+                <h1 class="titulosTop" style="margin-right:150px; margin-left:50px;">Buscar Ruta</h1>
+                <a href="#" data-icon="vertodas" class="botonTitulosDer" onclick="window.location.href='mis_reservas.html'">
+				Mis Reservas
+				</a>
+            </div>
+             </br>
+             </br>
+			
+			
+				<div class="ui-grid-solo">
+					<div class="ui-block-a" style="background:#fff;">
+						<ul data-role="listview">
+					
+							
+							<li><h2>Por sector</h2>
+								<form  id="buscarRutaXSector-form" method="post"  style="display:flex;" onsubmit="return submitFormBuscarRutaXSector()">
+									<div style="width:100%;">
+										<select class="js-example-basic-single" name="buscarXSector" id="buscarXSector" data-role="none" style="width:100%;" >
+										</select>
+										
+									</div>
+									<div class="divBoton">
+										<button type="submit"  data-icon="buscar" class="agregaAutoBtn" style="margin:0px;"> Buscar</button>
+									</div>
+								</form>
+							<span>Rutas disponibles para hoy: </span><span id="hoy" name="hoy"></span><span id="hora" name="hora"></span><span id="hoyvar" name="hoyvar"></span> 
+							</li>
+													
+							<li><h4>Ver todas las rutas disponibles</h4>
+								<form  id="buscarRutaXFecha-form" method="post" onsubmit="return submitFormVerTodasRuta()" style="display:flex;">
+									<!--<div style="width:100%;">
+										<input class="min-today" type="date"  name="buscarXFecha" id="buscarXFecha" style="width:100%;" value="" >
+									</div>-->
+									<div style="margin-left:auto; margin-right:auto">
+										<div class="divBoton">
+											<button type="submit" data-icon="vertodasrutas" class="agregaAutoBtn" style=""> Ver Todas</button>
+										
+										</div>
+									</div>
+								</form>
+							</li>
+						</ul>	
+
+							<div class="segBlock">
+								<h4 style="text-align:center; color:#004671;">Rutas encontradas</h4>
+								<ul data-role="listview" data-inset="true" id="listaRutas" name="listaRutas">
+								    
+								</ul>
+																
+							</div>	
+						</br>
+						</br>
+						</br>
+						
+						<!-- POPUP mostrando la información de una ruta encontrada, con la opción de reservarla -->
+					
+						<div data-role="popup" id="popupRuta" data-overlay-theme="a" data-theme="c" data-dismissible="false" style="max-width:400px;" class="ui-corner-all">
+							<div data-role="header" data-theme="a" class="ui-corner-top">
+								<h1>Ruta</h1>
+								<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">X</a>
+							</div>
+							<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content" style="background-color:white;">												 
+								
+									<ul data-role="listview">
+										<li>
+											<div class="ui-grid-a">
+												<div class="ui-block-a">
+													<img id="rutaDescFotoCargar" src="img/fotoperfil.jpg" style="
+													width: 70%;
+													height: 130px;
+													margin-top: 10px;
+													margin-left: 10px;
+													margin-bottom: 10px;
+													border: 2px solid #0076bd;">
+												</div>
+												<div class="ui-block-b">
+													<h3 style="font-size:15px; color: #004671">Perfil del Conductor</h3>
+													<p id="rutaDescNombre" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescApellido" class="textoDatosUsuarioPopUp"></p>
+													<p id ="rutaDescEdad" class="textoDatosUsuarioPopUp"></p>
+													<p id ="rutaDescRol" class="textoDatosUsuarioPopUp"></p>
+													<p id ="rutaDescContacto" class="textoDatosUsuarioPopUp"></p>
+												</div>
+											</div>
+										</li>
+										<li>
+											 <div class="ui-grid-a">
+														<!--<h3 style="text-align:center; margin:10px;">Mi Automóvil</h3>-->
+												<div class="ui-block-a">
+										
+													<img class="popphoto" id="rutaDescFotoAutoUsuario" src="img/agregarauto.jpg" alt="Mi auto" style="
+													width: 100%;
+													height:25%;
+													border: 2px solid #0076bd;">															
+																	
+																		
+												</div>
+												<div class="ui-block-b" style="padding-left: 10px; text-align:left;">
+													<h3 style="font-size:15px; color: #004671">Datos del Auto</h3>
+													<p id="rutaDescPlaca" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescMarca" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescModelo" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescTipo" class="textoDatosUsuarioPopUp"></p>
+													<p id="rutaDescColor" class="textoDatosUsuarioPopUp"></p>
+												</div>
+												 
+														   
+											</div>
+										</li>
+										
+										<li style="padding:0px; color: #004671;"><h2 style="text-align:center;">Trayectoria de la ruta</h2>
+											<div id="descRutaMapa"></div>
+										</li>	
+											
+										<li>
+											<div>
+												<h3 style="font-size:15px; color: #004671">Datos de la ruta</h3>
+												<p id="rutaDescPDEncuentro" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescDestino" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescSector" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescFecha" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescHora" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescCapacidad" class="textoDatosUsuarioPopUp"></p>
+												<p id="rutaDescEstado" class="textoDatosUsuarioPopUp"></p>
+											</div>
+										</li>
+									</ul>
+								
+									</br>
+										<div style="display:flex">
+										<button type="submit" id="btnReservaRuta" class="agregaAutoBtn" data-icon="agregoAutos" style="width:70%;">Reservar Ruta</button>
+										<a href="#" class="agregaAutoBtn" data-role="button" data-inline="true" data-rel="back" data-theme="c">Atras</a>
+										</div>
+									</br>
+								
+							</div>
+						</div> 	<!-- POPUP fin -->
+											
+					</div>
+				</div>
+				 
+				
+				
+			
+			
+          <!--  <ul data-role="listview" data-inset="true" id="listaRutas">
+				
+			</ul>-->
+
+            <div id ="footer2" data-role="footer" class="ui-footer ui-footer-fixed">
+                <div data-role="navbar" class="ui-navbar" >
+                    <ul>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="buscarnav2" data-icon="buscar" >Buscar</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="autonav2" data-icon="auto" onclick="opcion(event,'miauto')">Mi Auto</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="rutanav2" data-icon="ruta" onclick="opcion(event,'miruta')">+ Ruta</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="perfilnav2" data-icon="perfil1" onclick="opcion(event,'perfil')" >Perfil</a></li>
+                    </ul>
+                </div>
+            </div><!-- /footer -->
+
+
+    </div>
+
+    <!--////////////////////////////////CONTENT MIAUTO//////////////////////////////////////////////-->
+
+    <div id="miauto" class="tabcontent">
+
+
+            <div id ="header3" data-role="header" class="ui-header ui-header-fixed" style="background:#0076bd;">
+                <!--<a href="#" data-icon="ayuda">Ayuda</a>   -->
+                <h1 class="titulosTop" style="margin-right:150px; margin-left:50px;">Mi Automóvil</h1>
+                <a href="javascript:void(0)" class="botonTitulosDer" data-icon="agregoAuto" onclick="window.location.href='agregar_auto.html'">
+					Agregar Auto
+				</a>
+            </div>
+            </br>
+            </br>
+			</br>
+			
+			<!--
+            <div>
+                <button id="anadir" class="agregaAutoBtn" data-icon="agregoAutos" onclick="window.location.href='agregar_auto.html'">Agregar Auto</button>
+            </div>
+			-->
+            <div class="ui-grid-a">
+			 			<!--<h3 style="text-align:center; margin:10px;">Mi Automóvil</h3>-->
+                <div class="ui-block-a">
+		
+                    <a href="#popupParis" data-rel="popup" data-position-to="window" data-transition="fade"><img class="popphoto" id="fotoAutoUsuario" src="img/agregarauto.jpg" alt="Mi auto" style="
+                    width: 100%;
+					height:30%;
+                    margin-left: 10px;
+					margin-right: 10px;
+                    margin-bottom: 10px;
+					border: 2px solid #0076bd;"></a>
+                                    <div data-role="popup" id="popupParis" data-overlay-theme="a" data-theme="d" data-corners="false">
+                                        <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="salir2" data-iconpos="notext" class="ui-btn-right">Close</a><img id="fotoAutoModal" class="popphoto" src="img/agregarauto.jpg" style="max-height:512px;" alt="Mi auto">
+                                    </div>
+									
+										
+                </div>
+                <div class="ui-block-b" style="padding-left: 10px; text-align:center;">
+                    <h3>Dueño</h3>
+                    <p id="nombre1" class="textoDatosUsuario"></p>
+                    <p id="edad1" class="textoDatosUsuario"></p>
+                    <p id="rol1" class="textoDatosUsuario"></p>
+                 </div>
+               
+            </div>
+			
+			<div class="ui-grid-solo">
+				<div class="ui-block-a">
+					<ul data-role="listview">
+                        <li id="mostrarPlaca"></li>
+                        <li id="mostrarMarca"></li>
+                        <li id="mostrarModelo"></li>
+                        <li id="mostrarColor"></li>
+                        <li id="mostrarTipo"></li>
+						<li id="mostrarCapacidad"></li>
+
+                    </ul>
+				</div>
+            </div>
+            </br>
+            </br>
+            </br>
+
+            <div id ="footer3" data-role="footer" class="ui-footer ui-footer-fixed">
+                <div data-role="navbar" class="ui-navbar" >
+                    <ul>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="buscarnav3"  data-icon="buscar" onclick="opcion(event,'buscar')" >Buscar</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="autonav3" data-icon="auto">Mi Auto</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="rutanav3" data-icon="ruta" onclick="opcion(event,'miruta')">+ Ruta</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="perfilnav3" data-icon="perfil1" onclick="opcion(event,'perfil')" >Perfil</a></li>
+                    </ul>
+                </div>
+            </div><!-- /footer -->
+
+    </div>
+
+    <!--////////////////////////////////CONTENT MIRUTA//////////////////////////////////////////////-->
+    <div id="miruta" class="tabcontent">
+
+
+            <div id ="header4" data-role="header" class="ui-header ui-header-fixed" style="background:#0076bd;" >
+            <!--<a href="#" data-icon="ayuda">Ayuda</a>   -->
+            <h1 class="titulosTop" style="margin-right:150px; margin-left:50px;">Crear una Ruta</h1>
+            <a href="javascript:void(0)" data-icon="vertodas" class="botonTitulosDer" onclick="window.location.href='mis_rutas.html'">
+				Ver mis rutas
+			</a>
+            </div>
+            </br>
+            </br>
+
+
+           
+		<form  id="addruta-form" method="post" onsubmit="return submitFormCrearRuta();">
+            <div class="ui-grid-solo">
+                <div class="ui-block-a">
+                    <ul data-role="listview">
+                        <li><h2>Punto de Encuentro</h2>
+						<div style="display:flex">
+							<select name="select-native-fc" id="pdEncuentroRutaCrear" name="pdEncuentroRutaCrear" data-mini="true" >
+								<option value="" disabled selected>Escoja una opción...</option>
+								<option value="Parqueadero CISCO" class="rojo">Parqueadero CISCO</option>
+                                <option value="Parqueadero Aulas S" class="verde">Parqueadero Aulas S</option>
+                                <option value="Parqueadero Aulas A" class="azul">Parqueadero Aulas A</option>
+                                <option value="Parqueadero Hidraúlica" class="rosado">Parqueadero Hidraúlica</option>
+                            						  
+                            </select>
+							<div class="divBoton">
+								<a href="#popupPhotoPortrait" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-transition="fade" style="padding:5px; margin:5px;">Ver</a>
+								
+								<div data-role="popup" id="popupPhotoPortrait" data-overlay-theme="a" data-theme="d" data-corners="false" data-tolerance="30,15">
+	  						  	<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="salir2" data-iconpos="notext" class="ui-btn-right">Close</a><img src="img/prueba2.jpg" alt="Photo portrait">
+								</div>
+								
+							</div>
+						</div>
+						
+                        </li>
+						
+						<li><h2>Punto de Llegada</h2>
+							
+							 <!-- search input box -->
+						
+								<div class="form-group input-group" style="display:flex">
+									<div style="width:100%">
+									<input type="text" id="search_location" class="form-control" placeholder="Buscar dirección" >
+									</div>
+									<div class="divBoton" style="padding-left:5px; width:35px;">
+										<button class="btn btn-default get_map" id="verMapa" name="verMapa"  style="padding:5px;">
+											Ir
+										</button>
+									</div>
+								</div>
+							
+							</br>
+							<!-- display google map -->
+							<div id="geomap"></div>
+
+							<!-- display selected location information -->
+							
+							<p class="datosMapa">Dirección: <input type="text" class="search_addr" id="direccion_destino" name="direccion_destino" size="45" required="required"></p>
+							<p class="datosMapa">Latitud: <input type="text" class="search_latitude" id="latitud_destino" name="latitud_destino" size="30" required="required"></p>
+							<p class="datosMapa">Longitud: <input type="text" class="search_longitude" id="longitud_destino" name="longitud_destino" size="30" required="required"></p>
+					
+						
+						</li>
+
+                        <li><h2>Sector</h2>
+							
+                			<select class="js-example-basic-single" name="sectorDestRutaCrear" id="sectorDestRutaCrear" data-role="none" style="width:100%;" >
+				     				
+							</select>
+							<p>
+						</li>
+
+                        <li><h2>Fecha de Viaje</h2>
+							
+                            <input class="min-today" type="date"  name="fechaRutaCrear" id="fechaRutaCrear" value="" required="required" >
+						
+						 
+                        </li>
+
+                        <li><h2>Hora de Viaje</h2>
+                            <input type="time" name="horaRutaCrear" id="horaRutaCrear" data-clear-btn="true" min="07:00" max="21:00" value="" required="required"><i>(De 07:00 a 21:00)</i>
+							
+                        </li>
+
+                        <li><h2>Número de asientos disponibles</h2>
+							<input type="range" name="disponibleRutaCrear" id="disponibleRutaCrear" value="3" min="1" max="5" step="1" data-highlight="true">
+                        </li>
+
+                        <li><h2>Teléfono de Contacto</h2>
+                        						
+                                <input type="text" id="celularRutaCrear" name="celularRutaCrear" disabled="disabled" />
+                            
+                        </li>
+						
+						  <li><h2>Automóvil</h2>
+                        
+                                <input type="text" id="autoRutaCrear" name="autoRutaCrear" disabled="disabled" />
+								<div style="visibility:hidden; width:0px; height:0px;" > 
+								<input type="text" value="0" id="capacidadMax" name="capacidadMax" disabled="disabled" />
+								</div>
+
+                        </li>
+						
+
+                    </ul>
+                </div>
+            </div>
+			</br>
+			 <div>
+                <button type="submit"  data-icon="crearRuta"  id = "guardarRuta" class="agregaAutoBtn">Crear Ruta</button>
+            </div>
+		</form>	
+		
+		    </br>
+            </br>
+            </br>
+
+
+            <div id ="footer4" data-role="footer"  class="ui-footer ui-footer-fixed">
+                <div data-role="navbar" class="ui-navbar" >
+                    <ul>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="buscarnav4"  data-icon="buscar" onclick="opcion(event,'buscar')">Buscar</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="autonav4" data-icon="auto" onclick="opcion(event,'miauto')">Mi Auto</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="rutanav4" data-icon="ruta">+ Ruta</a></li>
+                        <li><a href="javascript:void(0)" class="barraInferior" id="perfilnav4" data-icon="perfil1" onclick="opcion(event,'perfil')" >Perfil</a></li>
+                    </ul>
+                </div>
+            </div><!-- /footer -->
+
+
+    </div>
+	 
+      <script type="text/javascript" src="cordova.js"></script>
+		
+    <script type="text/javascript" src="js/fastclick.js"></script>
+    
+    <script type="text/javascript" src="js/index.js"></script>
+	
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwa9xK2Kt0sPdhoslHsNyczPJ3aU1gMtU"></script>
+<script type="text/javascript" src="js/gmaps.js"></script>
+
+	<script>
+	//captura de fecha y hora actual
+		var hoy =new Date();
+		var y = hoy.getFullYear();
+		//Mes
+		var m = hoy.getMonth() + 1;
+		//Día
+		var d = hoy.getDate();
+		
+		//fecha del actual día 
+		var fechaFormato = y + "-" + m + "-" + d ;
+		$("#hoy").html(fechaFormato);
+		$("#hoyvar").val(fechaFormato);
+		
+		//capturar la hora
+		var hora = hoy.getHours();
+		var minuto = hoy.getMinutes();
+		var segundo = hoy.getSeconds();
+		
+		if (hora < 10) {hora = "0" + hora}
+		if (minuto < 10) {minuto = "0" + minuto}
+		if (segundo < 10) {segundo = "0" + segundo}
+		// hora actual del día
+		var horita = hora + ":" + minuto + ":" + segundo;
+		$("#hora").val(horita);
+	
+	</script>
+
+	
+    <script>
+	// FUNCIÓN PARA RETRASAR EL INCIO DE PANTALLA CUANDO SE LOGUEA
+         $(document).ready(function()
+        {
+            document.getElementById("perfil").style.opacity="0";
+            setTimeout(function() {
+                $(".ui-loader").hide();
+                document.getElementById("perfil").style.opacity="";
+            }, 2000);
+
+        });
+		
+		function onBackKeyDown() {
+			// Handle the back button
+			navigator.app.exitApp();
+		}
+		document.addEventListener("backbutton", onBackKeyDown, false);
+		
+    </script>
+	
+	<script>
+	
+	//VARIABLE PARA GUARDAR Y LLAMAR LOS DATOS DE LA TABLA USUARIO EN EL LOCALSTORAGE
+		var usuario = JSON.parse(localStorage.getItem('usuario'));
+		
+		$("#nombreMostrar").html("<h2>Nombre</h2>"+usuario.nombre+" "+usuario.apellido );
+		$("#sexoMostrar").html("<h2>Género</h2>"+usuario.sexo);
+		$("#sectorMostrar").html("<h2>Sector de Residencia</h2>"+usuario.sector);
+		$("#telefonoMostrar").html("<h2>Número de Contacto</h2>"+usuario.telefono);
+		$("#nombre").html(usuario.nombre);
+		$("#rol").html(usuario.rol);
+		$("#celularRutaCrear").val(usuario.telefono);
+	
+		
+	//FUNCIÓN PARA CALCULAR LA EDAD DEL USUARIO USANDO SU FECHA DE NACIMIENTO EN EL CAMPO CON ID EDAD
+		var fecha = new Date(usuario.fecha_nac);
+		$("#edad").html(calculateAge()+ " años");
+		//$("#edad1").html(calculateAge()+ " años");
+		function calculateAge() { // birthday is a date
+		   var ageDifMs = Date.now() - fecha.getTime();
+		   var ageDate = new Date(ageDifMs); // miliseconds from epoch
+		   return Math.abs(ageDate.getUTCFullYear() - 1970);
+		 }
+	
+	// FUNCIÓN PARA CONVERTIR LA FECHA DE NÚMEROS A LETRAS
+		var meses = [
+			  "Enero", "Febrero", "Marzo",
+			  "Abril", "Mayo", "Junio", "Julio",
+			  "Agosto", "Septiembre", "Octubre",
+			  "Noviembre", "Diciembre"
+			]
+			
+			var date = new Date(fecha);
+			var dia = date.getDate()+1;
+			var mes = date.getMonth();
+			var yyy = date.getFullYear();
+			var fecha_formateada = dia + ' de ' + meses[mes] + ' de ' + yyy;
+			$("#fechaMostrar").html("<h2>Fecha de Nacimiento</h2>"+ fecha_formateada);
+			
+	
+	
+	//FUNCIÓN PARA VALIDAR EL BOTÓN SALIR Y CERRAR UNA SESIÓN INCIADA
+		$(document).on('click', '#perfilnav1', function(){	
+			console.log("LogOut");
+			localStorage.setItem('usuario',"");
+			localStorage.setItem('autoOb',"");
+									
+			window.location.replace("login.html");
+			
+		});
+		
+	//FUNCIÓN PARA CARGAR UNA FOTO DE USUARIO EN EL CAMPO IMG DE ID CARGARFOTO
+		if(usuario.foto != undefined && usuario.foto != ""){
+			
+			$("#fotoCargar").attr("src",usuario.foto);
+		}
+	
+	//FUNCIÓN PARA VALIDAR LA CORRECTA CARGA DE LA FOTO DEL USUARIO EN LA BASE DE DATOS
+		function succesFileTransfer(result){
+			console.log(result.response);
+			var resultado = JSON.parse(result.response);
+			if(resultado.flag == "si"){
+				usuario.foto = resultado.foto;
+				localStorage.setItem('usuario',JSON.stringify(usuario));
+				$("#fotoCargar").attr("src",usuario.foto);
+				/*alert("Exito subiendo la foto");*/
+				swal({
+				  text: "Se ha actualizado su foto de perfil",
+				  type: "success"
+				});
+			}else{
+				alert("Error actualizando la foto" );
+			}
+		}
+		function errorFileTransfer(result){
+			alert("Error subiendo la foto" + result);
+			console.log(result);
+		}
+		
+		// LLAMADA AL SERVICIO WEB PARA SUBIR LA FOTO DE USUARIO Y ENVÍO DE PARÁMETROS NECESARIOS PARA EL MISMO
+		function subirFoto(imageUriToUpload){
+			var url=encodeURI("http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php");
+		
+			var params = new Object();
+			params.accion = "subirFoto";  
+			params.id = usuario.id;  
+			var options = new FileUploadOptions();
+			options.fileKey = "FotoUsuario"; //depends on the api
+			options.fileName = imageUriToUpload.substr(imageUriToUpload.lastIndexOf('/')+1);
+			options.mimeType = "image/jpeg";
+			options.params = params;
+			options.chunkedMode = true; //this is important to send both data and files
+			
+			var ft = new FileTransfer();
+			ft.upload(imageUriToUpload, url, succesFileTransfer, errorFileTransfer, options);	
+		}
+		
+	// FUNCIÓN PARA ACCEDER TANTO A LA CÁMARA COMO A LA GALERÍA DEL TELÉFONO PARA ESCOGER UNA FOTO DE USUARIO	
+		function seleccion(results){
+			console.log(results.buttonIndex);
+			if(results.buttonIndex==1){
+				//Camara
+				navigator.camera.getPicture(function(result){
+					console.log(result);
+					subirFoto(result);
+				},function(error){
+					console.log(error);
+				},{
+					quality: 50,
+					destinationType: Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.CAMERA,
+				    targetWidth: -1,
+					targetHeight: -1,
+					encodingType: Camera.EncodingType.JPEG,
+					mediaType: Camera.MediaType.PICTURE,
+					correctOrientation: true
+					
+				});
+			}else if(results.buttonIndex==2){
+				//Galeria
+				navigator.camera.getPicture(function(result){
+					console.log(result);
+					subirFoto(result);
+				},function(error){
+					console.log(error);
+				},{
+					quality: 50,
+					destinationType: Camera.DestinationType.FILE_URI,
+					sourceType : Camera.PictureSourceType.SAVEDPHOTOALBUM,
+				    targetWidth: -1,
+					targetHeight: -1,
+					encodingType: Camera.EncodingType.JPEG,
+					mediaType: Camera.MediaType.PICTURE,
+					correctOrientation: true
+				});
+			}			
+		}
+	
+	// LLAMADA DEL PLUGGIN Y FUNCIONALIDAD DE LA CAMARA EN EL DISPOSITIVO MÓVIL 
+		$(document).on('click', '#fotoCargar', function(){	
+			console.log("entro");
+			navigator.notification.prompt("¿Quiere cambiar su foto de perfil?", seleccion, "Foto", ['Camara','Galería','Salir']);
+			
+		});
+		
+	//OBTENER LOS DATOS DEL AUTOMOVIL DE UN USUARIO REGISTRADO
+
+	 $('document').ready(function(){
+	 	var id_usuario=usuario.id;
+				$.ajax
+                    ({
+                        type:'POST',
+                      	
+						url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+                        data:{
+							'accion': 'obtenerAuto',
+							'id_usuario': id_usuario },
+                        contenType : 'application/json; charset=utf-8',
+                        dataType : 'json',
+
+                        success:function(data)
+                        {
+							
+                            if (data.flag == 'si'){
+								//alert("Tu auto tine la placa "+data.autoOb.placa_auto);
+								localStorage.setItem('autoOb',JSON.stringify(data.autoOb));//GUARDAR LOS DATOS DEL AUTO SACADOS DE LA TABLA AUTO EN EL LOCALSTORAGE COMO UNA CADENA JSON
+								$("#nombre1").html(usuario.nombre);
+								$("#rol1").html(usuario.rol);
+								$("#edad1").html(calculateAge()+ " años");
+								$("#mostrarPlaca").html("<h2>Número de Placa</h2>"+data.autoOb.placa_auto);
+								$("#mostrarMarca").html("<h2>Marca</h2>"+data.autoOb.marca_auto);
+								$("#mostrarModelo").html("<h2>Modelo</h2>"+data.autoOb.modelo_auto);
+								$("#mostrarColor").html("<h2>Color</h2>"+data.autoOb.color_auto);
+								$("#mostrarTipo").html("<h2>Tipo</h2>"+data.autoOb.tipo_auto);
+								$("#mostrarCapacidad").html("<h2>Capacidad para pasajeros</h2>"+ data.autoOb.capacidad_auto);
+							
+								$("#capacidadMax").val(data.autoOb.capacidad_auto);
+								$("#autoRutaCrear").val(data.autoOb.marca_auto +" "+ data.autoOb.modelo_auto);
+								
+														
+							  if(data.autoOb.foto_auto != undefined && data.autoOb.foto_auto != ""){
+			
+									$("#fotoAutoUsuario").attr("src",data.autoOb.foto_auto);
+									$("#fotoAutoModal").attr("src",data.autoOb.foto_auto);
+									
+								}
+								
+							}else if (data.flag == 'no'){
+								//alert("No se econtró un auto registrado");
+								localStorage.setItem('autoOb',JSON.stringify(""));//NO GUARDAR NADA EN EL LOCALSTORAGE
+								//VALIDAR CAMPOS VACIOS
+								$("#mostrarPlaca").html("<h2>NO EXISTE REGISTRO</h2>"+ "El usuario no ha registrado aún un auto");
+								
+						   }else if (data.flag == 'error'){
+								alert("Ha ocurrido un error grave");
+						   }
+                        }
+                        
+    			    }).fail(
+
+            			function (xhr, textStatus, err)
+                        {
+                           
+							alert("ERROR CON EL SERVICIO");
+                            
+            			}
+            		);
+        				return false;
+	 
+	 });
+	 
+	
+	//CARGAR LOS SECTORES EXTRAIDOS DE LA BASE EN EL CAMPO SELECT DE ID sector
+		function cargarSectores(){
+			$.ajax
+                    ({
+                        type:'POST',
+                      
+						url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+                        data:{
+							'accion': 'sectores' },
+                        contenType : 'application/json; charset=utf-8',
+                        dataType : 'json',
+                        success:function(data)
+                        {
+                            if (data.flag == 'si'){ //ENLISTAR LOS SECTORES EN EL CAMPO SELECT DE ID sector
+								/*var sectoresJson ='<option value="" disabled selected>Escoja una opción...</option>' + '<optgroup label="NORTE">';*/	
+								var sectoresJson ='<option value="" disabled selected>Escoja una opción...</option>';								
+								for(var i=0; i<data.sectores.Norte.length; i++){
+									sectoresJson += '<option value="'+data.sectores.Norte[i].id_sector+'">'+data.sectores.Norte[i].nombre_sector+'</option>';
+								}
+								
+								/*sectoresJson += '<optgroup label="SUR">';*/
+								sectoresJson += '';								
+								for(var i=0; i<data.sectores.Sur.length; i++){
+									sectoresJson += '<option value="'+data.sectores.Sur[i].id_sector+'">'+data.sectores.Sur[i].nombre_sector+'</option>';
+								}
+								
+								/*sectoresJson += '<optgroup label="CENTRO">';*/	
+								sectoresJson += '';									
+								for(var i=0; i<data.sectores.Centro.length; i++){
+									sectoresJson += '<option value="'+data.sectores.Centro[i].id_sector+'">'+data.sectores.Centro[i].nombre_sector+'</option>';
+								}
+								
+								/*sectoresJson += '<optgroup label="VALLE">';*/
+								sectoresJson += '';									
+								for(var i=0; i<data.sectores.Valles.length; i++){
+									sectoresJson += '<option value="'+data.sectores.Valles[i].id_sector+'">'+data.sectores.Valles[i].nombre_sector+'</option>';
+								}
+								//GUARDAR LOS VALORES EXTRAIDOS DESDE LA BASE DE LOS SECTORES Y PRESENTARLOS EN UN SELECT 
+								$("#sectorDestRutaCrear").html(sectoresJson); 
+								$("#buscarXSector").html(sectoresJson); 
+							}else if (data.flag == 'no'){
+								alert("No se econtró datos en la base");
+								
+						   }else if (data.flag == 'error'){
+								alert("Ha ocurrido un error grave");
+						   }
+                        }
+                        
+    			    }).fail(
+
+            			function (xhr, textStatus, err)
+                        {
+                           
+							alert("ERROR CON EL SERVICIO");
+                            
+            			}
+            		);
+		};
+		
+		cargarSectores();
+	
+	/// PROCESO PARA GUARDAR UNA RUTA CREADA/////////////////////////////////
+	
+	function submitFormCrearRuta(){
+					var id_usuario=usuario.id;
+					var latitud_origen= -0.197806;
+					var longitud_origen= -78.502291;
+					validado = new Boolean(true);
+					validado=validarRuta();
+					//alert('Validados ' + validado);
+					if(validado !== false)
+					{
+					
+					  $.ajax
+						({
+							type:'POST',
+							url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+							data:{
+								'accion': 'crearRuta',
+								'id_usuario': id_usuario ,
+								'sectorDestRutaCrear': $("#sectorDestRutaCrear").val(),
+								'latitud_origen': latitud_origen,
+								'longitud_origen': longitud_origen,
+								'latitud_destino': $("#latitud_destino").val(),
+								'longitud_destino': $("#longitud_destino").val(),
+								'pdEncuentroRutaCrear': $("#pdEncuentroRutaCrear").val(),
+								'direccion_destino': $("#direccion_destino").val(),
+								'horaRutaCrear': $("#horaRutaCrear").val(),
+								'disponibleRutaCrear': $("#disponibleRutaCrear").val(),
+								'fechaRutaCrear': $("#fechaRutaCrear").val()},
+							contenType : 'application/json; charset=utf-8',
+							dataType : 'json',
+
+							success:function(data)
+							{
+							
+								if (data.flag == 'si'){
+									/*alert("LA RUTA SE HA CREADO CORRECTAMENTE.");
+									window.location.replace("perfil.html");*/
+									
+									swal({
+										title: "Ruta Creada!",
+										text: "La ruta se ha creado correctamente.",
+										type: "success"
+									}).then(function() {
+										window.location = "perfil.html";
+									});
+								
+									//mandar a otra pagina
+								}else if (data.flag == 'error2'){
+									alert("Datos ingresados incorrectamente");
+								}else if(data.flag == 'nocarro'){
+									alert("Para poder crear una ruta debe tener un auto registrado en su perfil");
+									
+								}else {
+									alert ('No se ha realizado nada');
+								}
+							}
+                        
+						}).fail(
+
+							function (xhr, textStatus, err)
+							{
+                            
+								alert("ERROR CON EL SERVICIO");
+                            
+							}
+						);
+						return false;
+					}; return false;
+				}
+				
+	//OBTENER LAS RUTAS CREADAS MEDIANTE UN SECTOR INGRESADO
+
+	function submitFormBuscarRutaXSector(){
+	 
+				$.ajax
+                    ({
+                        type:'POST',
+                      
+						url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+                        data:{
+							'accion': 'obtenerRutasXSector',
+							'buscarXSector': $("#buscarXSector").val(),
+							'hoyvar': $("#hoyvar").val(),
+							'hora': $("#hora").val()},
+                        contenType : 'application/json; charset=utf-8',
+                        dataType : 'json',
+
+                        success:function(data)
+                        {
+							
+                            if (data.flag == 'si'){
+								// Cargar la lista de rutas encontradas en la pantalla de busqueda	
+								var rutas = "";
+								for(var i=0; i< data.rutas.length;i++){
+									rutas += '<li><a href="#" id="ruta-'+data.rutas[i].id_ruta+'" class="arutas btnRuta">'+
+									'<div class="divrutas"><img class="imgrutas" src="'+data.rutas[i].foto+'"></div>'+
+									'<div><h2>Sector:  '+data.rutas[i].nombre_sector+'</h2>'+
+									'<p class="pRutas">'+data.rutas[i].direccion_destino+' </p>'+
+									'<p>Chofer: '+data.rutas[i].nombre+' '+data.rutas[i].apellido+'</p>'+
+									'<p>Inicio: '+data.rutas[i].fecha_ruta+' '+data.rutas[i].hora_ruta+'</p>'+
+									'<p>Dispone de : '+data.rutas[i].disponibilidad_ruta+' asientos ------  Estado:'+data.rutas[i].estado_ruta+'</p>'+
+									
+									'</div></a>'+
+									'</li>';
+								}
+								$("#listaRutas").html(rutas);
+																					
+								
+							}else if (data.flag == 'no'){
+									$("#listaRutas").html("NO SE HA ENCONTRADO NI UNA RUTA");
+									/*alert("No se ha encontrado rutas ha este destino");*/
+									swal({
+										  text: 'No se ha encontrado rutas ha este destino',
+										  type: 'info'
+										});
+								
+						   }else if (data.flag == 'error'){
+								alert("Ha ocurrido un error grave");
+						   }
+                        }
+                        
+    			    }).fail(
+
+            			function (xhr, textStatus, err)
+                        {
+                           
+							alert("ERROR CON EL SERVICIO");
+                            
+            			}
+            		);
+        				return false;
+	 
+	 };
+	
+	//OBTENER TODAS LAS RUTAS CREADAS DESDE EL ACTUAL DÍA EN ADELANTE
+
+	function submitFormVerTodasRuta(){
+	 
+				$.ajax
+                    ({
+                        type:'POST',
+                      	
+						url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+                        data:{
+							'accion': 'obtenerTodasRutas',
+							'hoyvar': $("#hoyvar").val(),},
+                        contenType : 'application/json; charset=utf-8',
+                        dataType : 'json',
+
+                        success:function(data)
+                        {
+							
+                            if (data.flag == 'si'){
+								// Cargar la lista de rutas encontradas en la pantalla de busqueda	
+								var rutas = "";
+								for(var i=0; i< data.rutas.length;i++){
+									rutas += '<li><a href="#" id="rutas-'+data.rutas[i].id_ruta+'" class="arutas btnRuta">'+
+									'<div class="divrutas"><img class="imgrutas" src="'+data.rutas[i].foto+'"></div>'+
+									'<div><h2>Sector:  '+data.rutas[i].nombre_sector+'</h2>'+
+									'<p class="pRutas">'+data.rutas[i].direccion_destino+' </p>'+
+									'<p class="pRutas">Chofer: '+data.rutas[i].nombre+' '+data.rutas[i].apellido+'</p>'+
+									'<p class="pRutas">Inicio: '+data.rutas[i].fecha_ruta+' '+data.rutas[i].hora_ruta+'</p>'+
+									'<p class="pRutas">Dispone: '+data.rutas[i].disponibilidad_ruta+' asientos ------  Estado:'+data.rutas[i].estado_ruta+'</p>'+
+									'</div></a>'+
+									'</li>';
+								}
+								$("#listaRutas").html(rutas);
+																					
+								
+							}else if (data.flag == 'no'){
+									$("#listaRutas").html("NO SE HA ENCONTRADO NI UNA RUTA");
+									/*alert("No se han encontrado rutas creadas ");*/
+									swal({
+										  text: 'No se han encontrado rutas creadas',
+										  type: 'info'
+										});
+								
+						   }else if (data.flag == 'error'){
+								alert("Ha ocurrido un error grave");
+						   }
+                        }
+                        
+    			    }).fail(
+
+            			function (xhr, textStatus, err)
+                        {
+                           
+							alert("ERROR CON EL SERVICIO");
+                            
+            			}
+            		);
+        				return false;
+	 
+		};
+		
+		
+	/*Detalle ruta*/
+	var rutaSelect =0;
+	$("body").on("click",'.btnRuta',function()
+	{
+		rutaSelect = $(this).attr("id").split("-")[1];
+		$.ajax
+		({
+			type:'POST',
+			
+			url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+			data:{
+				'accion': 'descripcionRuta',
+				'idRuta': rutaSelect},
+			contenType : 'application/json; charset=utf-8',
+			dataType : 'json',
+
+			success:function(data)
+			{
+				
+				if (data.flag == 'si'){
+							
+					// datos del chofer
+					var edadChofer=new Date(data.rutas.fecha_nac);
+						function calculateAgeDriver() { // birthday is a date
+					   var ageDifMs = Date.now() - edadChofer.getTime();
+					   var ageDate = new Date(ageDifMs); // miliseconds from epoch
+					   return Math.abs(ageDate.getUTCFullYear() - 1970);
+					 }
+					$("#rutaDescNombre").html('<span class="spanPopUp">Nombre: </span>' + data.rutas.nombre);
+					$("#rutaDescApellido").html('<span class="spanPopUp">Apellido: </span>' + data.rutas.apellido);
+					$("#rutaDescEdad").html('<span class="spanPopUp">Edad: </span>' + calculateAgeDriver()+ " años");
+					$("#rutaDescRol").html('<span class="spanPopUp">Rol: </span>' + data.rutas.rol);
+					$("#rutaDescContacto").html('<span class="spanPopUp"># Contacto: </span>' + data.rutas.telefono);
+					$("#rutaDescFotoCargar").attr("src",data.rutas.foto);
+					// datos del auto de la ruta
+					$("#rutaDescPlaca").html('<span class="spanPopUp">Placa: </span>' + data.rutas.placa_auto);
+					$("#rutaDescMarca").html('<span class="spanPopUp">Marca: </span>' + data.rutas.marca_auto);
+					$("#rutaDescModelo").html('<span class="spanPopUp">Modelo: </span>' + data.rutas.modelo_auto );
+					$("#rutaDescTipo").html('<span class="spanPopUp">Tipo: </span>' + data.rutas.tipo_auto);
+					$("#rutaDescColor").html('<span class="spanPopUp">Color: </span>' + data.rutas.color_auto);
+					$("#rutaDescFotoAutoUsuario").attr("src",data.rutas.foto_auto);
+					// datos de la ruta
+					$("#rutaDescPDEncuentro").html('<span class="spanPopUp">Punto de Encuentro: </span>' + data.rutas.pd_encuentro);
+					$("#rutaDescDestino").html('<span class="spanPopUp">Destino: </span>' + data.rutas.direccion_destino);
+					$("#rutaDescSector").html('<span class="spanPopUp">Sector destino: </span>' + data.rutas.nombre_sector);
+					$("#rutaDescFecha").html('<span class="spanPopUp">Fecha: </span>' + data.rutas.fecha_ruta);
+					$("#rutaDescHora").html('<span class="spanPopUp">Hora: </span>' + data.rutas.hora_ruta);
+					$("#rutaDescCapacidad").html('<span class="spanPopUp">Disponibilidad: </span>' + data.rutas.disponibilidad_ruta + " asientos");
+					$("#rutaDescEstado").html('<span class="spanPopUp">Estado de la ruta: </span>' + data.rutas.estado_ruta);
+					
+					// graficar la ruta en el mapa con las coordenadas obtenidas de la BD
+					$("#popupRuta").popup("open");
+					 var mapDescRuta = new GMaps({
+						  el: '#descRutaMapa',
+						  lat: -0.197806,
+						  lng: -78.5023
+						});
+						var destinoLatDesRuta = data.rutas.latitud_destino;
+						var destinoLonDesRuta = data.rutas.longitud_destino;
+					mapDescRuta.drawRoute({
+					  origin: [-0.197806, -78.5023],
+					  destination: [destinoLatDesRuta, destinoLonDesRuta],
+					  travelMode: 'driving',
+					  strokeColor: '#B5071B',
+					  strokeOpacity: 0.5,
+					  strokeWeight: 6
+					});
+				}else if (data.flag == 'no'){
+						$("#listaRutas").html("NO SE HA ENCONTRADO NI UNA RUTA");
+						
+					
+			   }else if (data.flag == 'error'){
+					alert("Ha ocurrido un error grave");
+			   }
+			}
+			
+		}).fail(
+
+			function (xhr, textStatus, err)
+			{
+			   
+				alert("ERROR CON EL SERVICIO");
+				
+			}
+		);
+	}); /*fin detalle ruta*/
+	
+	/*//////////RESERVAR EN UNA RUTA////////////*/
+	$("#btnReservaRuta").click(function()
+	{
+		$.ajax
+		({
+			type:'POST',
+			url:'http://gmoncayoresearch.com/carpoolingUCE/Servidor/api.php',
+			data:{
+				'accion': 'reservaRuta',
+				'idRuta': rutaSelect,
+				'idUser': usuario.id},
+			contenType : 'application/json; charset=utf-8',
+			dataType : 'json',
+
+			success:function(data)
+			{
+				
+				if (data.flag == 'reservahecha'){
+					alert("Has reservado en esta ruta, por favor contactate con el conductor. En Mis Reservas encontrarás sus datos");
+						location.reload();
+					
+				}else if (data.flag == 'autolleno'){
+					alert("Lo sentimos esta ruta ya está llena");
+					
+					
+			   }else if (data.flag == 'yareservo'){
+					alert("Usted ya tiene una reserva en esta ruta");
+								
+					
+			   }else if (data.flag == 'noentro'){
+					alert("ERROR: NO SE HA REALIZADO LA CONSULTA");
+				}
+			}
+		}).fail(
+
+			function (xhr, textStatus, err)
+			{
+			   
+				alert("ERROR CON EL SERVICIO");
+				
+			}
+		);
+	});  /*FIN RESERVA*/
+	
+	</script>
+	
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+
+<html>
+    <head>
+
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+         <script type="text/javascript" src="js/jquery.js"></script>
+		 
+		<link href="https://fonts.googleapis.com/css?family=Black+And+White+Picture" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Oswald:700" rel="stylesheet">
+        <link rel="stylesheet" href="estilos.css">
+
+        <title>CARPOOLING UCE</title>
+
+
+
+    </head>
+
+    <body>
+
+
+        <div class="contenedor">
+		<br>
+		
+		 <button href="#" class="btnatras" onclick="window.location.href='perfil.html'">Atras</button>
+             <div align="center">
+                <img id="carro" src="img/Carpooluce.png" style="width: 25%; height:15%; ">
+            </div>
+			<br>
+			<section id="vision">
+
+                <div class="principal contenedor">
+                    <article id="mision1">
+                        <h2 class="titulo" style="font-size:30px; font-family: cursive;">CarpoolingUCE</h2>
+                        <p  class="fecha">Versión 1.0.0</p>
+                        <p style="text-align: justify">
+                           Aplicación móvil desarrollada para  cotejar automáticamente las ofertas y 
+							demandas de vehículo compartido en la Facultad de Ingeniería, 
+							Ciencias Físicas y Matemáticas.
+                        </p>
+						<p class="detales"> Desarrollado por: </p>
+						<p style="text-align:center;"> MARCO VINICIO GARCÍA YUNGA</p>
+                        
+						<p class="detales">Tutor: </p>
+						<p style="text-align:center;"> Ing. MILTON GIOVANNY MONCAYO UNDA</p>
+										
+                        <p class="detales">Disponible para Android : </p>
+						<p style="text-align:center;">DESDE VERSIÓN 5.1 Y SUPERIORES (funcionamiento óptimo)</p> 
+                       
+						<p style="text-align:center; color:blue; font-weight:bold;">
+                           Ingeniería Informática, Universidad Central del Ecuador
+                        </p>
+                    </article>
+                    
+                </div>
+							
+            </section>
+         
+
+            <div  class="principal contenedor">
+
+                <div align="center" style="padding-top: 5%">
+                    <img  src="img/uce.png" style="width: 80%; height:35%">
+                </div>
+				<br>
+			
+
+            </div>
+        </div>
+       
+        <script type="text/javascript" src="cordova.js"></script>
+	
+        <script type="text/javascript" src="js/fastclick.js"></script>
+       
+        <script type="text/javascript" src="js/index.js"></script>
+     
+
+   
+		<script>
+			function onBackKeyDown() {
+			// Handle the back button
+			navigator.app.exitApp();
+			}
+			document.addEventListener("backbutton", onBackKeyDown, false);
+		</script>
+
+
+    </body>
+</html>

@@ -1,0 +1,131 @@
+.divBoton{ 	/*centrar los botones*/
+	display:inline-block  !important;
+
+	
+}
+
+.cancelarBtn{  /*boton de cancelar ruta*/
+	 background-color: #DC143C !important;
+    color: white !important;
+	 font-weight: normal !important;
+}
+
+.agregaAutoBtn{	/*boton de agregar auto*/
+     background-color: #DC143C !important;
+    color: white !important;
+	 font-weight: normal !important;
+    font-size: 15px !important;
+	
+	
+	/* border-radius: 52px !important;*/
+    /*border: 2px solid #0016b0 !important;*/
+}
+
+.textoDatosUsuario{	/*tres datos importatens de usuario en perfil y mi auto*/
+    font-size: 17px  !important;
+  
+}
+
+.titulosTop{ /*titulo de cada contetn, h1 de los header*/
+	font-weight:normal !important;
+	color:white !important;
+	font-style:normal !important;
+	font-size: 17px !important;
+	
+	
+}
+
+.botonTitulosDer{ /*Botnoes en la barra de titulos parte derecha*/
+	
+	margin-left:58% !important;
+	border-radius: 10px !important;
+    border: 2px outset darkgrey !important;
+	font-size:12px !important;
+	font-weight: italic !important;
+	margin-top: 3px !important;
+	padding-left:38px !important;
+	
+}
+
+.botonTitulosIzq{ /*Botnoes en la barra de titulos parte izquierda*/
+	
+	
+	border-radius: 10px !important;
+    border: 2px outset darkgrey !important;
+	font-size:12px !important;
+	font-weight: italic !important;
+	margin-top: 3px !important;
+	padding-left:38px !important;
+	
+}
+
+.barraInferior{ /*botones de la barra inferior*/
+	background: #004671 !important;
+	color:white !important;
+	border-width:1px !important;
+	border-color:darkgrey !important;
+	
+}
+
+iframe {
+    border: none !important;
+}
+
+
+.datosMapa {
+	font-size: 12px !important;
+	text-align: center !important;
+	font-weight: bold !important;
+	
+}
+/*Formatos a la presentación de las rutas encontradas*/
+.arutas{
+	display:flex !important;
+	background-color: #f6f6f6 !important;
+	border: 2px solid !important;
+	border-radius: 10px !important;
+	border-color: #ddd !important;
+	color: #333 !important;
+	text-decoration: none !important;
+}
+
+.divrutas{
+	width:100px !important;
+}
+.imgrutas{
+	width:95% !important;
+	height:130px !important;
+}
+.segBlock{
+	background: #fff !important;
+	margin: 10px !important;
+}
+
+.textoDatosUsuarioPopUp{	/*tres datos importatens de usuario en perfil y mi auto*/
+    font-size: 12px  !important;	
+  
+}
+
+.spanPopUp{
+	font-weight: bold !important;
+	color: black !important;
+}
+
+.secRutas{
+	font-size: 13px !important;
+}
+
+
+.pRutas {
+     width: 220px;
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+}
+
+.calificarBtn{  /*boton de cancelar ruta*/
+	 background-color: #DC143C !important;
+    color: white !important;
+	 font-weight: normal !important;
+}
+
